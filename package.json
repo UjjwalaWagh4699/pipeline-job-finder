@@ -1,0 +1,10 @@
+{
+  "name": "pipeline-pro",
+  "private": true,
+  "version": "3.0.0",
+  "scripts": {
+    "setup": "npm install && npm install --prefix server && npm install --prefix client",
+    "dev": "concurrently -n api,web -c cyan,magenta \"npm run dev --prefix server\" \"npm run dev --prefix client\""
+  },
+  "devDependencies": { "concurrently": "^8.2.2" }
+}
