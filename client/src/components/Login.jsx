@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { api } from "../api";
 
-export default function Login({ onLogin }) {
-  const [mode, setMode] = useState("login");
+export default function Login({ onLogin, initialMode = "login", onBack }) {
+  const [mode, setMode] = useState(initialMode);
   const [f, setF] = useState({ name: "", email: "", password: "" });
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
@@ -15,6 +15,7 @@ export default function Login({ onLogin }) {
   return (
     <div className="auth">
       <form className="auth-box" onSubmit={submit}>
+        {onBack && <button type="button" className="link auth-back" onClick={onBack}>&larr; Back to home</button>}
         <h1>Pipeline</h1>
         <p>Live internship and job listings, plus a tracker for your own applications.</p>
         {mode === "register" && <label>Name<input required value={f.name} onChange={set("name")} /></label>}

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api, setToken } from "./api";
 import { today } from "./data";
 import Login from "./components/Login";
+import Home from "./components/Home";
 import Discover from "./components/Discover";
 import Tracker from "./components/Tracker";
 import Insights from "./components/Insights";
@@ -9,6 +10,7 @@ import JobForm from "./components/JobForm";
 
 export default function App() {
   const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user") || "null"));
+  const [screen, setScreen] = useState(null); // null = home page, "login" | "register" = auth form
   const [tab, setTab] = useState("discover");
   const [jobs, setJobs] = useState([]);
   const [editing, setEditing] = useState(null);
@@ -16,7 +18,7 @@ export default function App() {
   const [toast, setToast] = useState(null);
 
   const notify = (msg, bad = false) => { setToast({ msg, bad }); setTimeout(() => setToast(null), 2800); };
-  const logout = () => { setToken(""); localStorage.removeItem("user"); setUser(null); setJobs([]); };
+  const logout = () => { setToken(""); localStorage.removeItem("user"); setUser(null); setJobs([]); setScreen(null); setTab("discover"); };
   const login = ({ token, user }) => { setToken(token); localStorage.setItem("user", JSON.stringify(user)); setUser(user); };
 
   useEffect(() => { window.addEventListener("logout", logout); return () => window.removeEventListener("logout", logout); }, []);
@@ -50,7 +52,11 @@ export default function App() {
     catch (e) { notify(e.message, true); }
   };
 
-  if (!user) return <Login onLogin={login} />;
+  if (!user) {
+    return screen
+      ? <Login key={screen} initialMode={screen} onLogin={login} onBack={() => setScreen(null)} />
+      : <Home dark={dark} onToggleDark={() => setDark(!dark)} onLogin={() => setScreen("login")} onRegister={() => setScreen("register")} />;
+  }
 
   return (
     <div className="shell">
